@@ -122,7 +122,11 @@ echo "Building for AOSP......"
 make $MAKE_ARGS ${TARGET_DEVICE}_defconfig
 
 if [ $KSU_ENABLE -eq 1 ]; then
+    # Upstream SukiSU requires KPROBES; stock Xiaomi defconfig often leaves it off.
     scripts/config --file out/.config \
+    -e KPROBES \
+    -e HAVE_KPROBES \
+    -e KPROBE_EVENTS \
     -e KSU \
     -e KSU_SUSFS \
     -e KSU_SUSFS_SUS_PATH \
@@ -136,6 +140,7 @@ if [ $KSU_ENABLE -eq 1 ]; then
     -e KSU_SUSFS_SUS_MAP \
     -e THREAD_INFO_IN_TASK \
     -e KPM
+    make $MAKE_ARGS olddefconfig
 else
     scripts/config --file out/.config -d KSU
 fi
@@ -256,7 +261,11 @@ sed -i 's/\/\/39 01 00 00 11 00 03 51 03 FF/39 01 00 00 11 00 03 51 03 FF/g' ${d
 make $MAKE_ARGS ${TARGET_DEVICE}_defconfig
 
 if [ $KSU_ENABLE -eq 1 ]; then
+    # Upstream SukiSU requires KPROBES; stock Xiaomi defconfig often leaves it off.
     scripts/config --file out/.config \
+    -e KPROBES \
+    -e HAVE_KPROBES \
+    -e KPROBE_EVENTS \
     -e KSU \
     -e KSU_SUSFS \
     -e KSU_SUSFS_SUS_PATH \
@@ -304,6 +313,7 @@ scripts/config --file out/.config \
     -e MI_RECLAIM \
     -e RTMM \
 
+make $MAKE_ARGS olddefconfig
 make $MAKE_ARGS -j$(nproc)
 
 
