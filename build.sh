@@ -95,8 +95,7 @@ echo "TARGET_DEVICE: $TARGET_DEVICE"
 
 if [ $KSU_ENABLE -eq 1 ]; then
     echo "KSU is enabled"
-    # Use upstream SukiSU-Ultra susfs_new (includes selinux_hide + SuSFS for non-GKI)
-    curl -LSs "https://raw.githubusercontent.com/SukiSU-Ultra/SukiSU-Ultra/main/kernel/setup.sh" | bash -s susfs_new
+    curl -LSs "https://raw.githubusercontent.com/ApartTUSITU/SukiSU-Ultra/main/kernel/setup.sh" | bash -s ApartTUSITU
 else
     echo "KSU is disabled"
 fi
@@ -122,11 +121,7 @@ echo "Building for AOSP......"
 make $MAKE_ARGS ${TARGET_DEVICE}_defconfig
 
 if [ $KSU_ENABLE -eq 1 ]; then
-    # Upstream SukiSU requires KPROBES; stock Xiaomi defconfig often leaves it off.
     scripts/config --file out/.config \
-    -e KPROBES \
-    -e HAVE_KPROBES \
-    -e KPROBE_EVENTS \
     -e KSU \
     -e KSU_SUSFS \
     -e KSU_SUSFS_SUS_PATH \
@@ -139,8 +134,7 @@ if [ $KSU_ENABLE -eq 1 ]; then
     -e KSU_SUSFS_OPEN_REDIRECT \
     -e KSU_SUSFS_SUS_MAP \
     -e THREAD_INFO_IN_TASK \
-    -d KPM
-    make $MAKE_ARGS olddefconfig
+    -e KPM
 else
     scripts/config --file out/.config -d KSU
 fi
@@ -261,11 +255,7 @@ sed -i 's/\/\/39 01 00 00 11 00 03 51 03 FF/39 01 00 00 11 00 03 51 03 FF/g' ${d
 make $MAKE_ARGS ${TARGET_DEVICE}_defconfig
 
 if [ $KSU_ENABLE -eq 1 ]; then
-    # Upstream SukiSU requires KPROBES; stock Xiaomi defconfig often leaves it off.
     scripts/config --file out/.config \
-    -e KPROBES \
-    -e HAVE_KPROBES \
-    -e KPROBE_EVENTS \
     -e KSU \
     -e KSU_SUSFS \
     -e KSU_SUSFS_SUS_PATH \
@@ -278,7 +268,7 @@ if [ $KSU_ENABLE -eq 1 ]; then
     -e KSU_SUSFS_OPEN_REDIRECT \
     -e KSU_SUSFS_SUS_MAP \
     -e THREAD_INFO_IN_TASK \
-    -d KPM
+    -e KPM
 else
     scripts/config --file out/.config -d KSU
 fi
@@ -313,7 +303,6 @@ scripts/config --file out/.config \
     -e MI_RECLAIM \
     -e RTMM \
 
-make $MAKE_ARGS olddefconfig
 make $MAKE_ARGS -j$(nproc)
 
 
